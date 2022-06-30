@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
-from .permissions import MyCustomPermission,IsAccountOwner
+from .permissions import IsAccountOwner
 
 class UserView(generics.ListCreateAPIView):
     queryset = User.objects.all()
@@ -18,7 +18,7 @@ class UserUpdateView(generics.UpdateAPIView):
     serializer_class = UserSerializers
 
 class UserManagementView(generics.UpdateAPIView):
-    permission_classes =[MyCustomPermission]
+    permission_classes =[IsAccountOwner]
     queryset = User.objects.all()
     serializer_class = ManagementSerializer
 

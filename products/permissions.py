@@ -18,8 +18,8 @@ class MyCustomPermission(permissions.BasePermission):
             return True
         
         if request.method in 'POST':
-            return (request.user.is_authenticated,request.user.is_seller)
+            return (request.user.is_authenticated and request.user.is_seller)
 
         if request.method in 'PATCH':
-            return (request.user.is_authenticated,request.user.is_seller)
+            return (request.user.is_authenticated and request.user.is_seller)
         
