@@ -3,11 +3,11 @@ from .models import Product
 from users.serializers import UserSerializers
 
 class CreateProductSerializer(serializers.ModelSerializer):
-    seller_id = UserSerializers(read_only=True)
+    seller= UserSerializers(read_only=True,source='seller_id')
     class Meta:
         model=Product
-        fields = ['id','description','price','quantity','is_active','seller_id']
-        extra_kwargs = {'seller_id':{'read_only':True},'quantity':{'min_value':0}}
+        fields = ['id','description','price','quantity','is_active',"seller"]
+        extra_kwargs = {'quantity':{'min_value':0}}
 
 class ListProductSerialzier(serializers.ModelSerializer):
     class Meta:

@@ -97,7 +97,16 @@ class UserViewsTest(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("token",
             response.data
-        )    
+        )   
+
+    def test_cannot_login_with_wrong_keys(self):   
+        response = self.client.post('/api/login/',{"email":"wrong@email.com",
+            "password": "wrong"}, format='json')
+
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.data,
+            {"detail": "invalid email or password"}
+        )      
         
     def test_only_account_owner_can_update(self):
         self.client.force_authenticate(user=self.test_costumer)
@@ -110,20 +119,16 @@ class UserViewsTest(APITestCase):
         response = self.client.patch(f'/api/accounts/{self.test_seller.id}/',{"email": "test2@mail.com"}, format='json')
         self.assertEqual(response.status_code, 200)
 
-    def test_only_account_owner_or_superuser_can_update_is_active(self):
-        self.client.force_authenticate(user=self.test_costumer)
+    def test_only_superuser_can_update_is_active(self):
 
-        worng_response = self.client.patch(f'/api/accounts/{self.test_seller.id}/',{"is_active":False}, format='json') 
-        self.assertEqual(worng_response.status_code, 403)  
-        
         self.client.force_authenticate(user=self.test_seller)
 
-        response = self.client.patch(f'/api/accounts/{self.test_seller.id}/',{"is_active":False}, format='json')
-        self.assertEqual(response.status_code, 200)  
+        response = self.client.patch(f'/api/accounts/{self.test_seller.id}/management/',{"is_active":False}, format='json')
+        self.assertEqual(response.status_code, 403)  
 
         self.client.force_authenticate(user=self.test_superuser)
 
-        response = self.client.patch(f'/api/accounts/{self.test_seller.id}/',{"is_active":True}, format='json')
+        response = self.client.patch(f'/api/accounts/{self.test_seller.id}/management/',{"is_active":True}, format='json')
         self.assertEqual(response.status_code, 200)  
 
     
